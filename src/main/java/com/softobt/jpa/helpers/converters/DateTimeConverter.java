@@ -5,8 +5,10 @@ import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 /**
@@ -18,6 +20,11 @@ import java.util.Date;
 @Component
 public class DateTimeConverter implements AttributeConverter<LocalDateTime, Date>{
 
+    @Value("${app.time.zone:GMT+1}")
+    private static String timeZone;
+
+    @Value("${app.date.format:yyyy-MM-dd HH:mm:ss}")
+    private static String timeFormat;
     public DateTimeConverter(){
 
     }
@@ -41,5 +48,16 @@ public class DateTimeConverter implements AttributeConverter<LocalDateTime, Date
         }
     }
 
+
+    public static LocalDateTime now(){
+        return LocalDateTime.now(ZoneId.of(timeZone));
+    }
+
+    public static LocalDateTime getDateFromString(String date){
+        return LocalDateTime.parse(date, DateTimeFormatter.ofPattern(timeFormat));
+    }
+    public static String getDateInString(LocalDateTime date){
+        return date.format(DateTimeFormatter.ofPattern(timeFormat));
+    }
 
 }
